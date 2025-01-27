@@ -7,26 +7,31 @@ import java.util.StringTokenizer;
 
 public class S1Trianglane {
 
-    static int solve(int[] first, int[] second, int N) {
-        //count number of edges (by 3)
+    static int solve(int[][] tiles, int N) {
         int count = 0;
+
         for (int i = 0; i < N; i++) {
-            if (first[i] == 1) {
+            if (tiles[0][i] == 1) {
                 count += 3;
             }
-            if (second[i] == 1) {
+            if (tiles[1][i] == 1) {
                 count += 3;
             }
         }
 
+        int prev = tiles[0][0];
+        for (int i = 1; i < N; i++) {
+            if (tiles[0][i] == 1 && prev == 1) {
+                count -= 2;
+            }
+            prev = tiles[0][i];
+        }   
+
         for (int i = 0; i < N; i++) {
-            if (first[i] == 1 && second[i] == 1 && i % 2 == 0) {
+            if (i > 0 && tiles[1][i - 1] == 1 && tiles[1][i] == 1) {
                 count -= 2;
             }
-            if (i + 1 < N && first[i] == 1 && first[i + 1] == 1) {
-                count -= 2;
-            }
-            if (i + 1 < N && second[i] == 1 && second[i + 1] == 1) {
+            if (i % 2 == 0 && tiles[0][i] == 1 && tiles[1][i] == 1) {
                 count -= 2;
             }
         }
@@ -35,28 +40,24 @@ public class S1Trianglane {
     }
 
     public static void main(String[] args) throws IOException {
+
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        int C = Integer.parseInt(br.readLine());
+
+        int N = Integer.parseInt(br.readLine());
+        int[][] tiles = new int[2][N];
 
         StringTokenizer s = new StringTokenizer(br.readLine());
-        int[] first = new int[C];
-        int[] second = new int[C];
-
-        int index = 0;
-        while (s.hasMoreTokens()) {
-            first[index] = Integer.parseInt(s.nextToken());
-            index++;
+        for (int i = 0; i < N; i++) {
+            tiles[0][i] = Integer.parseInt(s.nextToken());
         }
 
         s = new StringTokenizer(br.readLine());
-        index = 0;
-
-        while (s.hasMoreTokens()) {
-            second[index] = Integer.parseInt(s.nextToken());
-            index++;
+        for (int i = 0; i < N; i++) {
+            tiles[1][i] = Integer.parseInt(s.nextToken());
         }
 
-        System.out.println(solve(first, second, C));
+        System.out.println(solve(tiles, N));
+
     }
 
 }

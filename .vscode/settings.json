@@ -1,0 +1,9 @@
+{
+    "java.project.sourcePaths": [
+        ".",
+        "LeetCode",
+        "Practice",
+        "Practice\\CCC2024"
+    ],
+    "java.project.referencedLibraries": []
+}
