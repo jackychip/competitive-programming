@@ -1,48 +1,37 @@
 package CCC2020;
-import java.io.*;
-import java.util.*;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 
 public class S3SearchingForStrings {
 
-    static boolean isPerm(String og, String s) {
+    /* 
+     * Sliding window + dynamic frequency mapping
+     * 
+     * Update the HashMap dynamically
+     * Use int[26] (only 26 letters in alphabet no need to use HashMap)
+     */
 
-        HashMap<Character, Integer> freqS = new HashMap<>();
-        for (int i = 0; i < s.length(); i++) {
-            char c = s.charAt(i);
-            if (freqS.containsKey(c)) {
-                freqS.put(c, freqS.get(c) + 1);
-            }
-            else {
-                freqS.put(c, 1);
-            }
+    static int[] mapLetters(String s, int length) {
+
+        int[] map = new int[26];
+        char[] c = s.toCharArray();
+
+        for (int i = 0; i < 26; i++) {
+            map[i] = 0;
         }
 
-        HashMap<Character, Integer> freqO = new HashMap<>();
-        for (int i = 0; i < og.length(); i++) {
-            char c = og.charAt(i);
-            if (freqO.containsKey(c)) {
-                freqO.put(c, freqO.get(c) + 1);
-            }
-            else {
-                freqO.put(c, 1);
-            }
+        for (int i = 0; i < length; i++) {
+            map[((int)c[i]) - 97] += 1;
         }
 
-        for (char c : freqO.keySet()) {
-            if (!freqS.containsKey(c)) {
-                return false;
-            }
-
-            if (freqS.get(c) != freqO.get(c)) {
-                return false;
-            }
-
-        }
-
-        return true;
-        
+        return map;
     }
-    
+
     public static void main(String[] args) throws IOException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -50,26 +39,34 @@ public class S3SearchingForStrings {
         String N = br.readLine();
         String H = br.readLine();
 
-        int count = 0;
+        int nLength = N.length();
+        int hLength = H.length();
 
-        ArrayList<String> perms = new ArrayList<>();
+        if (nLength > hLength) {
+            System.out.println(0);
+            System.exit(0);
+        }
 
-        for (int i = 0; i <= H.length() - N.length(); ++i) {
+        int[] needleMap = mapLetters(N, nLength);
+        HashSet<String> list = new HashSet<>();
 
-            String sub = H.substring(i, i + N.length());
+        int[] temp = mapLetters(H.substring(0, nLength), nLength);
 
-            if (isPerm(N, sub)) {
-                if (!perms.contains(sub)) {
-                    count++;
-                    perms.add(sub);
-                }
+        for (int i = 0; i <= hLength - nLength; i++) {
+
+            if (Arrays.equals(needleMap, temp)) {
+                // System.out.println(substring);
+                list.add(H.substring(i, i + nLength));
+            }
+
+            if (i + nLength < hLength) {
+                temp[((int)H.charAt(i)) - 97] -= 1;
+                temp[((int)H.charAt(i + nLength)) - 97] += 1;
             }
         }
 
-
-        System.out.println(count);
+        System.out.println(list.size());
 
     }
 
 }
-
